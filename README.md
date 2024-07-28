@@ -2,6 +2,8 @@
   - [Activity Lifecycle](#activity)
   - [Activity Creating](#activity_creating)
   - [View Lifecycle](#view)
+  - [Fragment Lifecycle](#fragments)
+  - [RecyclerView](#recyclerview)
 
 # Android
 
@@ -47,7 +49,7 @@ Activity может менять свое состояние при измене
 onSaveInstanceState(outstate: Bundle) - метод, который вызывается при пересоздании actvivity, и мы можем его переопределить. На вход он принимает аргумент Bundle - по сути
 контейнер, куда можно сложить данные. Bundle хранит данные в виде пар ключ-значение. Значения могут быть примитивами, а также Parcelable и Serializable.
 
-Parcelable и Serializable - два интерфейса сериализации.
+Parcelable и Serializable - два интерфейса сериализации. Сериализуют объект в массив байтов, чтобы передать по сети или между экранами, и дересериализуют обратно.
 * Serializable - пришел из джавы. Объект сериализуется, используя рефлексию. Помечаем класс @Serializable. Рефлексия требует определенного времени и ресурсов. (!!! подробнее)
 * Parcelable - создан специально для android. Отличие в том, что когда мы используем интерфейс Parcelable мы должны самостоятельно описать методы записи и чтения parcelable,
 в которых описываем, как именно нужно сохранять данные. Можно не описывать эти методы руками, а пометить класс аннотацией @Parcelize, тогда эти методы сами сгенерируются в момент
@@ -128,4 +130,31 @@ onBackPressed работает исключительно по текущей у
 
 
 ## View
+
 [Yandex - View LifeCycle](https://youtu.be/7Xg1HSox8QI?list=PLXtiZNKIobF5E1JgDaisqnVJfbZeUFYkm&t=2596)
+[Yandex - View](https://www.youtube.com/watch?v=YEcVkUN6caw)
+
+В тот момент, когда view аттачится к activity, передается в setContentView() в onCreate(), у нее запускается собственный жизненный цикл со своими колбэками.
+![image](https://github.com/user-attachments/assets/7fb9443b-da92-40be-9a2d-779a23ca0895)
+
+Этапы:
+1. Measure pass: расчет размеров. Перед тем, как отрисовать view на экране, нам нужно определить ее размеры.
+- Проходим по дереву контейнера сверху вниз
+- родитель передает детям требования к размерам
+- view рассчитывает свои размеры, сохраняет их в measuredWidth и measuredHeight
+2. Layout pass: view позиционируются.
+- Проходим по дереву контейнера сверху вниз
+- Позиционируем view в контейнере
+3. Drawing: отрисовка.
+  View может быть перерисована, для этого существуют методы invalidate() и requestLayout(). ```requestLayout()``` перезапускает весь жизненный цикл. 
+```invalidate()``` размеры и положение view не меняются, но методы отрисовки drawing вызываются заново.
+![image](https://github.com/user-attachments/assets/38a41766-c9d1-4ca2-b76c-f4a26e352ed1)
+Кроме того, у View есть методы сохранения состояния.
+- ```onSaveInstanceState(): Parcelable``` - ```return bundle```
+- ```onRestoreInstanceState(p: Parcelable)``` - ```p as Bundle.getParcelable()```
+
+
+## Fragments
+
+
+## RecyclerView
